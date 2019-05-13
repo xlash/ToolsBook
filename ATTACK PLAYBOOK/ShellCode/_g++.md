@@ -1,0 +1,2 @@
+-w : ignores all warning
+-z execstack :  By default, the stack is non executable, this overrides it. https://www.win.tue.nl/~aeb/linux/hh/protection.html
