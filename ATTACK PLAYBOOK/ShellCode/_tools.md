@@ -16,3 +16,15 @@ objdump -d shell.bin | grep '[0-9a-f]:'|grep -v 'file'|cut -f2 -d:|cut -f1-6 -d'
 
 # References
 []
+
+# Using Ausyscall linux command to find syscall number
+ausyscall exit 
+> Will return 60
+
+
+
+## JCP Technique
+Jump Call & Pop techique
+
+# Python string to bytecode :
+python -c 'import binascii; print(binascii.hexlify(b"/bin//sh"[::-1]))'
