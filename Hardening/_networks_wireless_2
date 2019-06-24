@@ -1,0 +1,9 @@
+
+# KRACK Attack on WPA WPA2
+https://blog.rapid7.com/2017/10/16/the-wi-fi-krack-vulnerability-what-you-need-to-know/
+
+If possible, configure WPA2 equipment to use and enforce the AES-CCMP (AES-Counter Mode CBC-MAC) protocol, as it makes it much more difficult for eavesdroppers to eavesdrop (in general, though it does not thwart this attack) and helps ensure integrity of all communication by preventing tampering.
+
+
+# Architecture recommendation
+Use AES with CCMP instead of AES only.
