@@ -32,6 +32,11 @@ Service logging
 		Disabled by default
 	e. Amazon CloudWatch Logs
 	f. Amazon CloudWatch Events
+	g. VPC
+		VPC flow logs (VPC or ENI)
+
+	[ ] Need to restrict access to these S3 logs for integrity protection. Set them as read-only
+
 ## Encryption
 
 ## Network Security
