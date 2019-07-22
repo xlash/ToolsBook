@@ -1,0 +1,11 @@
+[GPO Info] (https://social.technet.microsoft.com/Forums/windowsserver/en-US/0453271c-bf23-461b-b001-7f353d293d08/enforced-or-not-in-group-policy-object)
+
+Order of GPO being applied 
+
+Local system policies first,
+	 then policies on the Active Directory Domain level, 
+	 	then policies on the Active Directory Site level and 
+	 		then the policies for all the Organization Units the computer and user are members of
+
+Link enabled : GPO is enforce
+Enforced: GPO value cannot be overriden at another level.

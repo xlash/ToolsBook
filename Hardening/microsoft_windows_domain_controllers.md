@@ -21,3 +21,5 @@ Ensure the following list of ports are open, but not more.
 	https://www.zdnet.com/article/microsoft-recommends-using-a-separate-device-for-administrative-tasks/
 
 ## Domain accounts on a separate forest, that cannot access Internet.
+
+## prevent administrative tasks from being executed remotely

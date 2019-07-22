@@ -1,0 +1,4 @@
+{ANY SHAREPOINT_SITE}/_vti_bin/UserGroup.asmx
+{ANY SHAREPOINT_SITE}/_vti_bin/sites.asmx
+{ANY SHAREPOINT_SITE}/_vti_bin/userdisp.aspx?id=
+/_vti_bin/UserGroup.asmx?WSDL
