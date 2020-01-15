@@ -137,3 +137,6 @@ __pycache__/*
 *CONFIDENTIAL*
 .key
 *PRIVATE*
+
+# Installed tools
+bin/
