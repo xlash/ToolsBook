@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: YOURINITIALSbadcontainer
+  labels:
+spec:
+  containers:
+  - name: YOURINITIALSbadcontainer
+    image: mcscourse/alpine-containertools

