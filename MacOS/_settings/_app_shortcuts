@@ -1,0 +1,50 @@
+defaults read  ~/Library/Preferences/.GlobalPreferences.plist
+
+    NSUserKeyEquivalents =     {
+        Back = "^\\U2190";
+        Bigger = "^$=";
+        Bold = "^b";
+        Copy = "^c";
+        "Copy Style" = "^$c";
+        Cut = "^x";
+        "Enregistrer la base de donn\\U00e9es" = "^s";
+        Find = "^f";
+        "Find Next" = "^g";
+        "Find Previous" = "^$g";
+        "Find..." = "^f";
+        Forward = "^\\U2192";
+        Italic = "^i";
+        New = "^n";
+        "New Incognito Window" = "^$n";
+        "New Tab" = "^t";
+        "New Window" = "^n";
+        Paste = "^v";
+        "Paste Item" = "^v";
+        "Paste Style" = "^$v";
+        Print = "^p";
+        "Print..." = "^p";
+        Replace = "^r";
+        Save = "^s";
+        "Save As..." = "^$s";
+        "Save..." = "^s";
+        "Select All" = "^a";
+        Smaller = "^-";
+        Underline = "^u";
+        "Undo Paste" = "^z";
+    };
+
+
+GNM% defaults read  ~/Library/Preferences/com.google.Chrome.plist
+{
+    LastRunAppBundlePath = "/Applications/Google Chrome.app";
+    NSNavLastRootDirectory = "/Volumes/Secomba/gnm/Boxcryptor/Dropbox/Personnel_encrypted/Finances/Impots 2018";
+    NSNavLastUserSetHideExtensionButtonState = 1;
+    NSNavPanelExpandedSizeForOpenMode = "{712, 448}";
+    NSNavPanelExpandedSizeForSaveMode = "{712, 448}";
+    NSNavPanelExpandedStateForSaveMode = 1;
+    NSUserKeyEquivalents =     {
+        Back = "^\\U2190";
+        Forward = "^\\U2192";
+    };
+    PMPrintingExpandedStateForPrint2 = 0;
+}
